@@ -1,3 +1,5 @@
+{{-- Form booking 3 langkah: pilih tanggal, pilih kamar, detail tamu & pembayaran --}}
+
 <x-app-layout>
     @section('title', 'Buat Booking')
 
