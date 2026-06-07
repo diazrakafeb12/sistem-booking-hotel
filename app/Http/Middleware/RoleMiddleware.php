@@ -1,4 +1,5 @@
 <?php
+// Middleware: validasi role user (admin, ceo, customer)
 
 namespace App\Http\Middleware;
 
