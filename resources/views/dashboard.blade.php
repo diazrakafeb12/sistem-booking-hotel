@@ -1,3 +1,5 @@
+{{-- Dashboard admin/ceo: stats cards, grafik pendapatan, donut chart --}}
+
 <x-app-layout>
     @section('title', 'Dashboard')
 
