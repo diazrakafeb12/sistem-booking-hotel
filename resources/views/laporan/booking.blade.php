@@ -1,3 +1,5 @@
+{{-- Laporan booking: filter tanggal, filter status, export print --}}
+
 <x-app-layout>
     @section('title', 'Laporan Booking')
 
