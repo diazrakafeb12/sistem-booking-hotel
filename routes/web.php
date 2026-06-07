@@ -1,4 +1,5 @@
 <?php
+// Routes: admin, ceo, customer role-based access
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
