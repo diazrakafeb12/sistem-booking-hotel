@@ -1,6 +1,6 @@
 
 <?php
-
+// Migration: Tabel tipe_kamar - menyimpan kategori dan harga kamar hotel
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
