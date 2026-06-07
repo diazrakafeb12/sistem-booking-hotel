@@ -5,9 +5,33 @@ use App\Models\Booking;
 use App\Models\Pembayaran;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\BookingExport;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class LaporanController extends Controller
 {
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\BookingExport;
+use Barryvdh\DomPDF\Facade\Pdf;
+
+public function exportExcel()
+{
+    return Excel::download(new BookingExport, 'laporan-booking-' . now()->format('d-m-Y') . '.xlsx');
+}
+
+public function exportPdf()
+{
+    $bookings = Booking::with(['tamu', 'kamar.tipeKamar', 'pembayaran'])->latest()->get();
+    $totalPendapatan = $bookings->sum('total_biaya');
+
+    $pdf = Pdf::loadView('laporan.pdf-booking', compact('bookings', 'totalPendapatan'))
+              ->setPaper('a4', 'landscape');
+
+    return $pdf->download('laporan-booking-' . now()->format('d-m-Y') . '.pdf');
+}
+
     public function booking(Request $request)
     {
         $query = Booking::with(['tamu', 'kamar.tipeKamar']);

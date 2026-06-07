@@ -57,10 +57,22 @@
 
     {{-- Tabel --}}
     <div class="card">
-        <div class="card-header">
-            <h3>📋 Data Booking</h3>
-            <button onclick="window.print()" class="btn btn-primary btn-sm">🖨️ Print</button>
-        </div>
+        <<div class="card-header">
+    <h3>📋 Data Booking</h3>
+    <div style="display:flex; gap:8px">
+        <a href="{{ route('laporan.export.excel') }}"
+           class="btn btn-success btn-sm">
+            📊 Export Excel
+        </a>
+        <a href="{{ route('laporan.export.pdf') }}"
+           class="btn btn-danger btn-sm">
+            📄 Export PDF
+        </a>
+        <button onclick="window.print()" class="btn btn-primary btn-sm">
+            🖨️ Print
+        </button>
+    </div>
+</div>
         <div style="padding:0">
             <table>
                 <thead>

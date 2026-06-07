@@ -455,7 +455,128 @@
 
 </div>
 
-</body>
-</html>
+{{-- Realtime Notification Bell --}}
+@if(in_array(Auth::user()->role, ['admin', 'ceo']))
+<div id="notifBell" style="position:fixed; bottom:24px; right:24px; z-index:999">
+    <div id="notifBtn" onclick="toggleNotif()"
+         style="width:52px; height:52px; background:linear-gradient(135deg,#2e86de,#1a6bbf); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 16px rgba(46,134,222,0.4); font-size:22px; position:relative">
+        🔔
+        <div id="notifBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:#e74c3c; color:#fff; border-radius:50%; width:20px; height:20px; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center">
+            0
+        </div>
+    </div>
+
+    <div id="notifPanel" style="display:none; position:absolute; bottom:64px; right:0; width:320px; background:#fff; border-radius:14px; box-shadow:0 8px 32px rgba(0,0,0,0.15); overflow:hidden; border:1px solid #eef2f7">
+        <div style="padding:14px 18px; background:#0d2137; color:#fff; display:flex; justify-content:space-between; align-items:center">
+            <span style="font-weight:700; font-size:13px">🔔 Notifikasi Booking</span>
+            <span onclick="toggleNotif()" style="cursor:pointer; color:#7fb3d3; font-size:18px">✕</span>
+        </div>
+        <div id="notifList" style="max-height:300px; overflow-y:auto">
+            <div style="text-align:center; padding:24px; color:#aaa; font-size:12px">
+                Memuat notifikasi...
+            </div>
+        </div>
+        <div style="padding:10px 18px; border-top:1px solid #f0f4f8; text-align:center">
+            <a href="{{ route('tamu.index') }}" style="font-size:12px; color:#2e86de; font-weight:600; text-decoration:none">
+                Lihat Semua Booking →
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+let lastCount   = 0;
+let notifOpen   = false;
+
+function toggleNotif() {
+    notifOpen = !notifOpen;
+    document.getElementById('notifPanel').style.display = notifOpen ? 'block' : 'none';
+    if (notifOpen) {
+        document.getElementById('notifBadge').style.display = 'none';
+        loadNotif();
+    }
+}
+
+function loadNotif() {
+    fetch('/api/hotel/booking')
+        .then(r => r.json())
+        .then(res => {
+            const bookings  = res.data.slice(0, 8);
+            const container = document.getElementById('notifList');
+
+            if (bookings.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:24px; color:#aaa; font-size:12px">Belum ada booking</div>';
+                return;
+            }
+
+            container.innerHTML = bookings.map(b => {
+                const statusColor = {
+                    confirmed: '#2e86de', checkin: '#27ae60',
+                    checkout: '#95a5a6', cancelled: '#e74c3c', pending: '#f39c12'
+                }[b.status] || '#888';
+
+                const statusIcon = {
+                    confirmed:'✅', checkin:'🏨', checkout:'🚪',
+                    cancelled:'❌', pending:'⏳'
+                }[b.status] || '📋';
+
+                return `
+                    <div style="padding:12px 18px; border-bottom:1px solid #f5f7fa; transition:background 0.1s"
+                         onmouseover="this.style.background='#f7faff'"
+                         onmouseout="this.style.background='#fff'">
+                        <div style="display:flex; justify-content:space-between; align-items:start">
+                            <div>
+                                <div style="font-weight:700; font-size:12px; color:#0d2137">
+                                    ${statusIcon} ${b.kode}
+                                </div>
+                                <div style="font-size:11px; color:#555; margin-top:2px">
+                                    👤 ${b.tamu} · 🛏️ Kamar ${b.kamar}
+                                </div>
+                                <div style="font-size:11px; color:#888; margin-top:2px">
+                                    📅 ${b.tgl_checkin} → ${b.tgl_checkout}
+                                </div>
+                            </div>
+                            <span style="font-size:10px; font-weight:700; color:${statusColor};
+                                         background:${statusColor}20; padding:2px 8px;
+                                         border-radius:20px; white-space:nowrap; margin-left:8px">
+                                ${b.status}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        });
+}
+
+// Polling setiap 30 detik cek booking baru
+function checkNewBooking() {
+    fetch('/api/hotel/statistik')
+        .then(r => r.json())
+        .then(res => {
+            const current = res.data.booking_confirmed;
+            if (lastCount > 0 && current > lastCount) {
+                const diff = current - lastCount;
+                document.getElementById('notifBadge').textContent  = diff;
+                document.getElementById('notifBadge').style.display = 'flex';
+                document.getElementById('notifBtn').style.animation = 'shake 0.5s ease';
+                setTimeout(() => document.getElementById('notifBtn').style.animation = '', 500);
+            }
+            lastCount = current;
+        });
+}
+
+// Jalankan pertama kali & setiap 30 detik
+checkNewBooking();
+setInterval(checkNewBooking, 30000);
+</script>
+
+<style>
+@keyframes shake {
+    0%,100% { transform: rotate(0deg); }
+    25%      { transform: rotate(-15deg); }
+    75%      { transform: rotate(15deg); }
+}
+</style>
+@endif
 </body>
 </html>
