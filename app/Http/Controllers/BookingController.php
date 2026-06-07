@@ -1,4 +1,6 @@
 <?php
+// Controller Booking: reservasi, cek ketersediaan, checkin, checkout
+
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
