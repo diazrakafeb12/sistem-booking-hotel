@@ -1,4 +1,5 @@
 <?php
+// Model Booking: relasi ke Tamu, Kamar, Pembayaran
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
