@@ -1,3 +1,5 @@
+{{-- Login page: redesign dengan split panel UI dan toggle password --}}
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
