@@ -1,3 +1,4 @@
+ {{-- Layout utama: sidebar navigasi Hotel Booking System --}}
  <!DOCTYPE html>
 <html lang="id">
 <head>
